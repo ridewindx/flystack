@@ -1,0 +1,15 @@
+[controller]
+controller
+
+[network]
+network
+
+[compute]
+compute-1
+
+[block-storage]
+block-storage-1
+
+[object-storage]
+object-storage-1
+object-storage-2
