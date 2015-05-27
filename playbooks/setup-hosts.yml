@@ -1,0 +1,10 @@
+---
+
+- name: Setup hostname
+  hosts: all
+  tasks:
+    - name: Setup hostname
+      hostname: name={{ inventory_hostname }}
+    - name: Setup hosts
+      synchronize: src=/etc/hosts dest=/etc/hosts
+      delegate_to: controller
