@@ -5,5 +5,12 @@
   tasks:
     - name: Install NTP
       yum: name=ntp state=latest
-    - name: Enable and start NTP
-      service: name=ntpd enabled=yes state=started
+    - name: Setup NTP to reference the controller node (1)
+      lineinfile: dest=/etc/ntp.conf regexp='^server.*iburst$' state=absent
+      when: inventory_hostname != "controller"
+    - name: Setup NTP to reference the controller node (2)
+      lineinfile: dest=/etc/ntp.conf line='server controller iburst'
+      when: inventory_hostname != "controller"
+    - name: Enable and restart NTP
+      service: name=ntpd enabled=yes state=restarted
+
