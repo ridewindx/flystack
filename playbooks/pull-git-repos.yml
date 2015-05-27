@@ -2,13 +2,16 @@
 
 - name: Pull git repos
   hosts: localhost
+
   tasks:
     - name: echo
       debug: var=item
       with_dict: git_repos
+
     - name: Pull git repos
       git: repo="{{ item.value}}.git" dest={{ dir }}
       with_dict: git_repos
+
   vars_files:
     - vars/git-repos.yml
   vars:

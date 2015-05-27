@@ -12,13 +12,21 @@
         # The Python MySQL library is compatible with MariaDB
         - MySQL-python
 
-    # Setup MySQL configuration file /etc/my.cnf
-    - ini_file: dest=/etc/my.cnf section=mysqld option=bind-address value={{ ansible_default_ipv4.address }}
-    - ini_file: dest=/etc/my.cnf section=mysqld option=default-storage-engine value=innodb
-    - ini_file: dest=/etc/my.cnf section=mysqld option=innodb_file_per_table value=1
-    - ini_file: dest=/etc/my.cnf section=mysqld option=collation-server value=utf8_general_ci
-    - ini_file: dest=/etc/my.cnf section=mysqld option=init-connect value="'SET NAMES utf8'"
-    - ini_file: dest=/etc/my.cnf section=mysqld option=character-set-server value=utf8
+    - name: Setup MySQL configuration file /etc/my.cnf
+      ini_file: dest=/etc/my.cnf section=mysqld option={{ item.option }} value={{ item.value }} backup=yes
+      with_items:
+        - option: bind-address
+          value: ansible_default_ipv4.address
+        - option: default-storage-engine
+          value: innodb
+        - option: innodb_file_per_table
+          value: 1
+        - option: collation-server
+          value: utf8_general_ci
+        - option: init-connect
+          value: "'SET NAMES utf8'"
+        - option: character-set-server
+          value: utf8
 
     - name: Enable and restart MySQL
       service: name=marialdb enabled=yes state=restarted

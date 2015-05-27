@@ -1,0 +1,15 @@
+---
+
+- name: Setup OpenSSH
+  hosts: all
+  tasks:
+    - name: Configure /etc/ssh/sshd_config
+      lineinfile: dest=/etc/ssh/sshd_config regexp={{ item.regexp }} line={{ item.line }} backrefs=yes backup=yes
+      with_items:
+        - regexp: "'^#?(GSSAPIAuthentication).*$'"
+          line: "'\\1 no'"
+        - regexp: "'^#?(UseDNS).*$'"
+          line: "'\\1 no'"
+
+    - name: Restart OpenSSH daemon
+      service: name=sshd state=restarted

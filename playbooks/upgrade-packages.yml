@@ -2,12 +2,15 @@
 
 - name: Upgrade packages
   hosts: all
+
   tasks:
     - name: Upgrade packages
       yum: name=* state=latest
+
     - name: Install packages
       yum: name={{ item }} state=latest
       with_items: install_packages
+
   vars:
     install_packages:
       - rsync
