@@ -1,0 +1,23 @@
+---
+
+git_repos:
+  nova: https://github.com/openstack/nova
+  neutron: https://github.com/openstack/neutron
+  glance: https://github.com/openstack/glance
+  keystone: https://github.com/openstack/keystone
+  cinder: https://github.com/openstack/cinder
+  swift: https://github.com/openstack/swift
+  heat: https://github.com/openstack/heat
+  ceilometer: https://github.com/openstack/ceilometer
+  horizon: https://github.com/openstack/horizon
+
+  neutron_lbaas: https://github.com/openstack/neutron-lbaas
+  neutron_vpnaas: https://github.com/openstack/neutron-vpnaas
+  neutron_fwaas: https://github.com/openstack/neutron-fwaas
+
+  novaclient: https://github.com/openstack/python-novaclient
+  neutronclient: https://github.com/openstack/python-neutronclient
+  glanceclient: https://github.com/openstack/python-glanceclient
+  keystoneclient: https://github.com/openstack/python-keystoneclient
+  cinderclient: https://github.com/openstack/python-cinderclient
+  swiftclient: https://github.com/openstack/python-swiftclient
