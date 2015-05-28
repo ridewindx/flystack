@@ -1,0 +1,31 @@
+#!/bin/env python
+# -*- coding: utf-8 -*-
+
+
+import json
+from subprocess import Popen, PIPE, STDOUT, CalledProcessError
+
+
+def trycmd(cmd):
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT, shell=True)
+    output, unused_err = process.communicate()
+    retcode = process.poll()
+    if retcode:
+        return ''  # return empty string if error occurred
+    return output
+
+
+def gather_facts():
+    # get ip addr corresponding to hostname
+    cmd = r'grep -E -e "^[^#]+\b`hostname`\b" /etc/hosts'
+    hostip, hostname = trycmd(cmd).split()
+    cmd = r"ip -o addr | grep %s | awk '{print $2}'" % hostip
+    hostif = trycmd(cmd).strip()
+    facts = {
+        'host': {'name': hostname, 'address': hostip, 'interface': hostif}
+    }
+
+    return json.dumps(facts)
+
+
+print gather_facts()
