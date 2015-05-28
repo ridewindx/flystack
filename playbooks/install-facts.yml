@@ -1,0 +1,12 @@
+---
+
+- name: Create directory for ansible custom facts
+  file: state=directory recurse=yes path=/etc/ansible/facts.d
+
+- name: Install custom executable fact
+  copy: src=facts/{{ item }} dest=/etc/ansible/facts.d mode="u=rwx"
+  with_items:
+    - dynamic.fact
+
+- name: re-read facts after adding custom facts
+  setup: filter=ansible_local
