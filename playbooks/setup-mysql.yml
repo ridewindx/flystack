@@ -29,4 +29,4 @@
           value: utf8
 
     - name: Enable and restart MySQL
-      service: name=marialdb enabled=yes state=restarted
+      service: name=mariadb enabled=yes state=restarted
