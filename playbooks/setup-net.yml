@@ -4,6 +4,12 @@
   hosts: all
 
   tasks:
+
+      - include: install-facts.yml
+
+      - debug: msg={{ item.key}}:{{item.value}}
+        with_dict: ansible_local.dynamic.host
+
       - shell: grep GATEWAY {{ ifcfg_file }}{{ hostvars['controller']['ansible_default_ipv4']['interface'] }}
         register: gateway
         delegate_to: controller
