@@ -16,7 +16,7 @@
       ini_file: dest=/etc/my.cnf section=mysqld option={{ item.option }} value={{ item.value }} backup=yes
       with_items:
         - option: bind-address
-          value: ansible_default_ipv4.address
+          value: "{{ ansible_default_ipv4.address }}"
         - option: default-storage-engine
           value: innodb
         - option: innodb_file_per_table
@@ -28,5 +28,23 @@
         - option: character-set-server
           value: utf8
 
-    - name: Enable and restart MySQL
-      service: name=mariadb enabled=yes state=restarted
+#    - name: Enable and restart MySQL
+#      service: name=mariadb enabled=yes state=restarted
+
+    - shell: mysql -srN -e "select count(*) from mysql.user where user = ''"
+      register: anonym_num
+
+    - shell: mysql -srN -e "delete from mysql.user where user = ''"
+      when: anonym_num.stdout | int > 0
+
+    - shell: mysql -srN -e "select count(*) from mysql.user where password = '' and user = 'root'"
+      register: nopasswd_root_num
+
+    - shell: mysql -srN -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('{{ db_password }}');"
+      when: nopasswd_root_num.stdout | int > 0
+
+#    - name: Securing the initial MySQL accounts
+
+  vars_files:
+    - vars/secrets.yml
+
