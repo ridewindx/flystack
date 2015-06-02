@@ -1,0 +1,16 @@
+---
+
+- shell: mysql -srN -e "select count(*) from mysql.user where user = ''"
+  register: anonym_num
+
+- shell: mysql -srN -e "delete from mysql.user where user = ''"
+  when: anonym_num.stdout | int > 0
+
+- shell: mysql -srN -e "select count(*) from mysql.user where password = '' and user = 'root'"
+  register: nopasswd_root_num
+
+- shell: mysql -srN -e "{{ item }}"
+  with_items:
+    - "update mysql.user set password = password('{{ db_password }}') where password = '' and user = 'root'"
+    - "flush privileges"
+  when: nopasswd_root_num.stdout | int > 0
