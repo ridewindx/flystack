@@ -1,0 +1,11 @@
+---
+
+- shell: mysql -p{{ db_password }} -srN -e "show databases"
+  register: databases
+
+- debug: msg={{ databases.stdout.split() }}
+
+- shell: mysql -srN -p{{ db_password }} -e "CREATE DATABASE keystone;"
+         -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '{{ keystone_dbpass }}';"
+         -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '{{ keystone_dbpass }}';"
+  when: "'keystone' not in databases.stdout"
