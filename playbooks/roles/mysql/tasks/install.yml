@@ -1,0 +1,28 @@
+---
+
+- name: Install MySQL
+  yum: name={{ item }} state=present
+  with_items:
+    - mariadb
+    - mariadb-server
+    # The Python MySQL library is compatible with MariaDB
+    - MySQL-python
+
+- name: Setup MySQL configuration file /etc/my.cnf
+  ini_file: dest=/etc/my.cnf section=mysqld option={{ item.option }} value={{ item.value }} backup=yes
+  with_items:
+    - option: bind-address
+      value: "{{ ansible_default_ipv4.address }}"
+    - option: default-storage-engine
+      value: innodb
+    - option: innodb_file_per_table
+      value: 1
+    - option: collation-server
+      value: utf8_general_ci
+    - option: init-connect
+      value: "'SET NAMES utf8'"
+    - option: character-set-server
+      value: utf8
+
+- name: Enable and restart MySQL
+  service: name=mariadb enabled=yes state=restarted
