@@ -21,3 +21,30 @@ git_repos:
   keystoneclient: https://github.com/openstack/python-keystoneclient
   cinderclient: https://github.com/openstack/python-cinderclient
   swiftclient: https://github.com/openstack/python-swiftclient
+
+  keystonemiddleware: https://github.com/openstack/keystonemiddleware
+
+  oslo.concurrency: https://github.com/openstack/oslo.concurrency
+  oslo.config: https://github.com/openstack/oslo.config
+  oslo.context: https://github.com/openstack/oslo.context
+  oslo.log: https://github.com/openstack/oslo.log
+  oslo.serialization: https://github.com/openstack/oslo.serialization
+  oslo.utils: https://github.com/openstack/oslo.utils
+  oslo.db: https://github.com/openstack/oslo.db
+  oslo.rootwrap: https://github.com/openstack/oslo.rootwrap
+  oslo.messaging: https://github.com/openstack/oslo.messaging
+  oslo.i18n: https://github.com/openstack/oslo.i18n
+  oslo.middleware: https://github.com/openstack/oslo.middleware
+  oslo.versionedobjects: https://github.com/openstack/oslo.versionedobjects
+  oslo.cache: https://github.com/openstack/oslo.cache
+  oslo.service: https://github.com/openstack/oslo.service
+  oslo.policy: https://github.com/openstack/oslo.policy
+  oslo.vmware: https://github.com/openstack/oslo.vmware
+  stevedore: https://github.com/openstack/stevedore
+  pycadf: https://github.com/openstack/pycadf
+  cliff: https://github.com/openstack/cliff
+  debtcollector: https://github.com/openstack/debtcollector
+  futurist: https://github.com/openstack/futurist
+  taskflow: https://github.com/openstack/taskflow
+  tooz: https://github.com/openstack/tooz
+  pylockfile: https://github.com/openstack/pylockfile
