@@ -1,0 +1,18 @@
+---
+
+- name: Setup python virtualenv
+  hosts: all
+  tasks:
+    - yum: name=python-virtualenv state=present
+
+    - shell: source {{ virtualenv_dir }}/bin/activate
+      register: venv_exists
+      ignore_errors: True
+
+    - shell: virtualenv {{ virtualenv_dir }}
+      when: venv_exists|failed
+
+    - lineinfile: dest=~/.bashrc line="source {{ virtualenv_dir }}/bin/activate" create=yes
+
+  vars_files:
+    - vars/openstack.yml
