@@ -1,0 +1,17 @@
+---
+
+- name: Setup RabbitMQ
+  hosts: mqservers
+  tasks:
+    - shell: systemctl list-unit-files | grep rabbit
+      register: rabbitmq_exists
+      ignore_errors: True
+
+    - yum: name=rabbitmq-server state=present
+      when: rabbitmq_exists|failed
+
+    - service: name=rabbitmq-server enabled=yes state=started
+
+    - rabbitmq_user: user={{ rabbitmq_user }} password={{ rabbitmq_password }} state=present
+
+    - shell: rabbitmqctl set_permissions {{ rabbitmq_user }} ".*" ".*" ".*"
