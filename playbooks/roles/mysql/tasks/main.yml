@@ -1,0 +1,17 @@
+---
+
+- command: systemctl status mariadb
+  register: mysql_exists
+  ignore_errors: True
+
+- include: install.yml
+  when: mysql_exists|failed
+
+- command: mysql -e "quit"
+  register: mysql_nopasswd
+  ignore_errors: True
+
+- include: secure.yml
+  when: mysql_nopasswd|success
+
+- include: openstack.yml
