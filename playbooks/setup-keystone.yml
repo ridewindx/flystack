@@ -1,0 +1,13 @@
+---
+
+- name: Setup keystone
+  hosts: controller
+
+  tasks:
+    - file: path={{ deploy_dir }} state=directory
+
+    - synchronize: src={{ source_dir }}/keystone dest={{ deploy_dir }}
+      delegate_to: localhost
+
+  vars_files:
+    - vars/openstack.yml
