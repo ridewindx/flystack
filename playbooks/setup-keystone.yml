@@ -26,5 +26,7 @@
 
     - shell: pip install -e {{ deploy_dir }}/keystone --no-allow-insecure
 
+
+
   vars_files:
     - vars/openstack.yml

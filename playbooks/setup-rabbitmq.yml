@@ -15,3 +15,6 @@
     - rabbitmq_user: user={{ rabbitmq_user }} password={{ rabbitmq_password }} state=present
 
     - shell: rabbitmqctl set_permissions {{ rabbitmq_user }} ".*" ".*" ".*"
+
+  vars_files:
+    - vars/secrets.yml

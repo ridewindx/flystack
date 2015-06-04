@@ -9,11 +9,8 @@
       when: upgrade is defined
 
     - name: Install packages
-      yum: name={{ item }} state=latest
+      yum: name={{ item }} state=present
       with_items: install_packages
-      tags:
-        - tagged
-      when: upgrade is defined
 
   vars:
     install_packages:
@@ -37,4 +34,6 @@
       - mod_wsgi
       - memcached
       - python-memcached
-      - python-cffi  # pip install cffi failed
+#      - python-cffi  # pip install cffi failed
+      - libffi-devel  # depended by python cffi, python cryptography
+      - openssl-devel  # depended by python cryptography
