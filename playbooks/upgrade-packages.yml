@@ -37,3 +37,4 @@
       - mod_wsgi
       - memcached
       - python-memcached
+      - python-cffi  # pip install cffi failed
