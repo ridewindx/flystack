@@ -3,30 +3,12 @@
 - name: Setup keystone
   hosts: controller
 
-  tasks:
-    # - shell: python facts/get-requirements.py {{ source_dir }}/keystone
-    #   delegate_to: localhost
-    #   register: requirements
+  pre_tasks:
+    - include: setup-users.yml user_name=keystone group_name=keystone
 
-    # - shell: ls {{ source_dir }}
-    #   delegate_to: localhost
-    #   register: repos
-
-    # - synchronize: src={{ source_dir }}/{{ item }} dest={{ deploy_dir }}
-    #   when: item in repos.stdout_lines
-    #   with_items: "{{ requirements.stdout_lines }}"
-    #   delegate_to: localhost
-
-    - file: path={{ deploy_dir }} state=directory
-
-    - synchronize: src={{ source_dir }}/keystone dest={{ deploy_dir }}
-      delegate_to: localhost
-
-    - shell: pip install -r {{ deploy_dir }}/keystone/requirements.txt --no-allow-insecure
-
-    - shell: pip install -e {{ deploy_dir }}/keystone --no-allow-insecure
-
-
+  roles:
+    - keystone
 
   vars_files:
     - vars/openstack.yml
+    - vars/secrets.yml
