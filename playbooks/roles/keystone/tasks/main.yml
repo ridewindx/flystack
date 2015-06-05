@@ -1,0 +1,55 @@
+---
+
+- file: path={{ deploy_dir }} state=directory
+
+- synchronize: src={{ source_dir }}/keystone dest={{ deploy_dir }}
+  delegate_to: localhost
+
+# - shell: pip install {{ item }} --no-allow-insecure
+#   with_lines: python facts/get-requirements.py {{ deploy_dir }}/keystone
+
+# - shell: pip install -e {{ deploy_dir }}/keystone --no-allow-insecure
+
+- file: path={{ item }} state=directory
+  with_items:
+    - /etc/keystone
+    - /var/log/keystone
+
+- copy: src={{ deploy_dir }}/keystone/etc/keystone.conf.sample dest=/etc/keystone/keystone.conf
+
+- copy: src={{ deploy_dir }}/keystone/etc/policy.json dest=/etc/keystone/policy.json
+
+- copy: src={{ deploy_dir }}/keystone/etc/keystone-paste.ini dest=/etc/keystone/keystone-paste.ini
+
+- copy: src={{ deploy_dir }}/keystone/etc/logging.conf.sample dest=/etc/keystone/logging.conf
+
+
+- ini_file: dest=/etc/keystone/keystone.conf
+            section={{item.section}} option={{item.option}} value={{item.value}}
+  with_items:
+    - {section: 'DEFAULT', option: 'admin_token', value: '{{keystone_admin_token}}'}
+    - {section: 'database', option: 'connection', value: 'mysql://root:{{ keystone_dbpass }}@{{ ansible_hostname }}/keystone'}
+    - {section: 'memcache', option: 'servers', value: 'localhost:11211'}
+    - {section: 'token', option: 'provider', value: 'keystone.token.providers.uuid.Provider'}
+    - {section: 'token', option: 'driver', value: 'keystone.token.persistence.backends.memcache.Token'}
+    - {section: 'revoke', option: 'driver', value: 'keystone.contrib.revoke.backends.sql.Revoke'}
+    - {section: 'DEFAULT', option: 'verbose', value: 'True'}
+    - {section: 'DEFAULT', option: 'log_file', value: 'keystone.log'}
+    - {section: 'DEFAULT', option: 'log_dir', value: '/var/log/keystone'}
+
+- command: keystone-manage db_sync
+
+- template: src=wsgi-keystone.conf.j2 dest=/etc/httpd/conf.d/wsgi-keystone.conf
+
+- file: path=/var/www/cgi-bin/keystone state=directory
+
+- copy: src={{ deploy_dir }}/keystone/httpd/keystone.py dest={{ item }}
+  with_items:
+    - /var/www/cgi-bin/keystone/main
+    - /var/www/cgi-bin/keystone/admin
+
+- command: chown -R keystone:keystone /var/www/cgi-bin/keystone
+- command: chmod 755 /var/www/cgi-bin/keystone
+
+- service: name=httpd enabled=yes state=started
+
