@@ -7,18 +7,19 @@
 
       - include: install-facts.yml
 
-      - debug: msg={{ item.key}}:{{item.value}}
-        with_dict: ansible_local.dynamic.host
+#      - debug: msg={{ item.key}}:{{item.value}}
+#        with_dict: ansible_local.dynamic.host
 
       - shell: grep GATEWAY {{ ifcfg_file }}{{ hostvars['controller']['ansible_default_ipv4']['interface'] }}
         register: gateway
         delegate_to: controller
-      - debug: var=ansible_env.SSH_CONNECTION.split()[2]
-#      - shell: grep GATEWAY {{ ifcfg_file }}
-#        register: result
-#        ignore_errors: True
-#      - lineinfile: dest={{ ifcfg_file }} line={{ ansible_default_ipv4.gateway }}
-#        when: result|failed
+        when: ansible_hostname != 'controller'
+
+      - lineinfile: dest={{ ifcfg_file }}{{ansible_local.dynamic.host.interface}} regexp=GATEWAY line={{ gateway.stdout }}
+        when: ansible_hostname != 'controller'
+
+      - shell: ifdown eth0 && ifup eth0
+        when: ansible_hostname != 'controller'
 
   vars:
     ifcfg_file: /etc/sysconfig/network-scripts/ifcfg-
