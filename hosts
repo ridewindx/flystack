@@ -1,15 +1,31 @@
-[controller]
+[deploy]
 controller
 
-[network]
+[dbservers]
+controller
+
+[dbservers:vars]
+db_password=2014
+
+[mqservers]
+controller
+
+[mqservers:vars]
+rabbitmq_user=openstack
+rabbitmq_password=2014
+
+[controllers]
+controller
+
+[networks]
 network
 
-[compute]
+[computes]
 compute-1
 
-[block-storage]
+[block-storages]
 block-storage-1
 
-[object-storage]
+[object-storages]
 object-storage-1
 object-storage-2
