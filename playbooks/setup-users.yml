@@ -1,0 +1,16 @@
+---
+
+- name: Create system group
+  group:
+    name: "{{ group_name }}"
+    state: present
+    system: yes
+
+- name: Create system user
+  user:
+    name: "{{ user_name }}"
+    group: "{{ group_name }}"
+    shell: /bin/false
+    system: yes
+    createhome: yes
+    home: /var/lib/{{ user_name }}
