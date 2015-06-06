@@ -1,0 +1,12 @@
+#!/bin/env python
+# -*- coding: utf-8 -*-
+
+import os
+
+activate_this = os.path.expanduser('{{ virtualenv_dir }}/bin/activate_this.py')
+execfile(activate_this, dict(__file__=activate_this))
+
+from keystone.server import wsgi as wsgi_server
+
+# 'application' is required in this context by WSGI spec
+application = wsgi_server.initialize_application(os.path.basename(__file__))

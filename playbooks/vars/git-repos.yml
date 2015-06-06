@@ -15,12 +15,13 @@ git_repos:
   neutron_vpnaas: https://github.com/openstack/neutron-vpnaas
   neutron_fwaas: https://github.com/openstack/neutron-fwaas
 
-  novaclient: https://github.com/openstack/python-novaclient
-  neutronclient: https://github.com/openstack/python-neutronclient
-  glanceclient: https://github.com/openstack/python-glanceclient
-  keystoneclient: https://github.com/openstack/python-keystoneclient
-  cinderclient: https://github.com/openstack/python-cinderclient
-  swiftclient: https://github.com/openstack/python-swiftclient
+  python-novaclient: https://github.com/openstack/python-novaclient
+  python-neutronclient: https://github.com/openstack/python-neutronclient
+  python-glanceclient: https://github.com/openstack/python-glanceclient
+  python-keystoneclient: https://github.com/openstack/python-keystoneclient
+  python-cinderclient: https://github.com/openstack/python-cinderclient
+  python-swiftclient: https://github.com/openstack/python-swiftclient
+  python-openstackclient: https://github.com/openstack/python-openstackclient
 
   keystonemiddleware: https://github.com/openstack/keystonemiddleware
 

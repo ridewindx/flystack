@@ -1,0 +1,7 @@
+---
+
+- shell: "{{ get_command }}"
+  register: result
+  ignore_errors: True
+- shell: "{{ create_command }}"
+  when: result|failed

@@ -1,0 +1,41 @@
+---
+
+- file: path={{ deploy_dir }} state=directory
+
+- synchronize: src={{ source_dir }}/{{ item }} dest={{ deploy_dir }}
+  delegate_to: localhost
+  with_items:
+    - glance_store
+    - glance
+
+- shell: pip install -e {{ deploy_dir }}/glance_store --no-allow-insecure
+
+- shell: pip install {{ item }} --no-allow-insecure
+  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/glance
+
+- shell: pip install -e {{ deploy_dir }}/glance --no-allow-insecure
+
+- file: path={{ item }} state=directory owner={{ user_name }} group={{ group_name }}
+  with_items:
+    - /etc/glance
+
+- copy: src={{ deploy_dir }}/glance/etc/{{ item }} dest=/etc/glance/{{ item.replace('.sample', '') }}
+  with_items:
+    - glance-api.conf
+    - glance-api-paste.ini
+    - glance-cache.conf
+    - glance-manage.conf
+    - glance-registry.conf
+    - glance-registry-paste.ini
+    - glance-scrubber.conf
+    - glance-search.conf
+    - glance-search-paste.ini
+    - policy.json
+    - schema-image.json
+    - search-policy.json
+    - glance-swift.conf.sample
+    - property-protections-policies.conf.sample
+    - property-protections-roles.conf.sample
+
+- copy: src={{ deploy_dir }}/glance/etc/metadefs dest=/etc/glance/
+

@@ -1,8 +1,8 @@
 ---
 
-virtualenv_dir: ~/venv
+virtualenv_dir: /var/venv
 
-source_dir: ~/openstack
+source_dir: /var/openstack-source
 
 version: 2015.1.0
-deploy_dir: ~/openstack-deploy
+deploy_dir: /var/openstack-deploy

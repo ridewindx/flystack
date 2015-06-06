@@ -9,7 +9,7 @@
       register: venv_exists
       ignore_errors: True
 
-    - shell: virtualenv {{ virtualenv_dir }}
+    - shell: virtualenv --system-site-packages {{ virtualenv_dir }}
       when: venv_exists|failed
 
     - lineinfile: dest=~/.bashrc line="source {{ virtualenv_dir }}/bin/activate" create=yes
