@@ -12,7 +12,7 @@
     - shell: virtualenv --system-site-packages {{ virtualenv_dir }}
       when: venv_exists|failed
 
-    - lineinfile: dest=~/.bashrc line="source {{ virtualenv_dir }}/bin/activate" create=yes
+    - lineinfile: dest=~/.bashrc regexp="source.+activate" line="source {{ virtualenv_dir }}/bin/activate" create=yes
 
   vars_files:
     - vars/openstack.yml
