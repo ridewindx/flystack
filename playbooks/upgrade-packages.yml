@@ -37,3 +37,4 @@
 #      - python-cffi  # pip install cffi failed
       - libffi-devel  # depended by python cffi, python cryptography
       - openssl-devel  # depended by python cryptography
+      - libxslt-devel  # depended by lxml
