@@ -14,5 +14,8 @@
 
     - lineinfile: dest=~/.bashrc regexp="source.+activate" line="source {{ virtualenv_dir }}/bin/activate" create=yes
 
+    - lineinfile: dest=~/.bashrc regexp="no_proxy" line="export no_proxy=localhost,127.0.0.1,controller,network,compute-1"
+    - lineinfile: dest=~/.bashrc regexp="NO_PROXY" line="export NO_PROXY=localhost,127.0.0.1,controller,network,compute-1"
+
   vars_files:
     - vars/openstack.yml
