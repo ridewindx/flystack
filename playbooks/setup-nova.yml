@@ -1,0 +1,18 @@
+---
+
+- name: Setup nova
+  hosts: controller
+
+  pre_tasks:
+    - include: setup-users.yml
+
+  roles:
+    - nova
+
+  vars_files:
+    - vars/openstack.yml
+    - vars/secrets.yml
+
+  vars:
+    user_name: nova
+    group_name: nova
