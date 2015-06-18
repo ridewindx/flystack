@@ -2,22 +2,23 @@
 
 - file: path={{ deploy_dir }} state=directory
 
-- synchronize: src={{ source_dir }}/{{ item }} dest={{ deploy_dir }}
-  delegate_to: localhost
-  with_items:
-    - glance_store
-    - glance
-
-- shell: pip install -e {{ deploy_dir }}/glance_store --no-allow-insecure
-
-- shell: pip install {{ item }} --no-allow-insecure
-  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/glance
-
-- shell: pip install -e {{ deploy_dir }}/glance --no-allow-insecure
+#- synchronize: src={{ source_dir }}/{{ item }} dest={{ deploy_dir }}
+#  delegate_to: localhost
+#  with_items:
+#    - glance_store
+#    - glance
+#
+#- shell: pip install -e {{ deploy_dir }}/glance_store --no-allow-insecure
+#
+#- shell: pip install {{ item }} --no-allow-insecure
+#  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/glance
+#
+#- shell: pip install -e {{ deploy_dir }}/glance --no-allow-insecure
 
 - file: path={{ item }} state=directory owner={{ user_name }} group={{ group_name }}
   with_items:
     - /etc/glance
+    - /var/log/glance
 
 - copy: src={{ deploy_dir }}/glance/etc/{{ item }} dest=/etc/glance/{{ item.replace('.sample', '') }}
   with_items:
@@ -38,4 +39,49 @@
     - property-protections-roles.conf.sample
 
 - copy: src={{ deploy_dir }}/glance/etc/metadefs dest=/etc/glance/
+
+- ini_file: dest=/etc/glance/glance-api.conf
+            section={{item.section}} option={{item.option}} value={{item.value}}
+  with_items:
+    - {section: 'database', option: 'connection', value: 'mysql://glance:{{ glance_dbpass }}@{{ ansible_hostname }}/glance'}
+    - {section: 'keystone_authtoken', option: 'auth_uri', value: 'keystone_auth_uri'}
+    - {section: 'keystone_authtoken', option: 'auth_url', value: 'keystone_auth_url'}
+    - {section: 'keystone_authtoken', option: 'auth_plugin', value: 'password'}
+    - {section: 'keystone_authtoken', option: 'project_domain_id', value: 'default'}
+    - {section: 'keystone_authtoken', option: 'user_domain_id', value: 'default'}
+    - {section: 'keystone_authtoken', option: 'project_name', value: 'service'}
+    - {section: 'keystone_authtoken', option: 'username', value: 'glance'}
+    - {section: 'keystone_authtoken', option: 'password', value: '{{ glance_password}}'}
+    - {section: 'paste_deploy', option: 'flavor', value: 'keystone'}
+    - {section: 'glance_store', option: 'default_store', value: 'file'}
+    - {section: 'glance_store', option: 'filesystem_store_datadir', value: '/var/lib/glance/images/'}
+    - {section: 'DEFAULT', option: 'notification', value: 'noop'}
+    - {section: 'DEFAULT', option: 'verbose', value: 'True'}
+
+- command: glance-manage db_sync
+
+
+
+
+
+- include: command.yml
+  vars:
+    get_command: openstack user show glance
+    create_command: openstack user create --password {{ glance_password }} glance
+
+- include: command.yml
+  vars:
+    get_command: openstack user role list --project service glance
+    create_command: openstack role add --project service --user glance admin
+
+- include: command.yml
+  vars:
+    get_command: openstack service show glance
+    create_command: openstack service create --name glance --description "OpenStack Image service" image
+
+- include: command.yml
+  vars:
+    get_command: openstack endpoint show image
+    create_command: openstack endpoint create --publicurl "{{ glance_service_url }}" --adminurl "{{ glance_admin_url }}" --internalurl "{{ glance_service_url }}" --region RegionOne image
+
 
