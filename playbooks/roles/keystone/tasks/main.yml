@@ -52,6 +52,7 @@
 
 - shell: keystone-all &
 
+#TODO: wait until kestone ready
 
 #- template: src=wsgi-keystone.conf.j2 dest=/etc/httpd/conf.d/wsgi-keystone.conf
 #
@@ -79,20 +80,23 @@
 - lineinfile: dest=~/.bashrc regexp="export OS_TOKEN=" line="export OS_TOKEN={{ keystone_admin_token }}"
 - lineinfile: dest=~/.bashrc regexp="export OS_URL=" line="export OS_URL={{ keystone_admin_url }}"
 
-#- lineinfile: dest=~/.bashrc regexp="export OS_USERNAME=" line="export OS_USERNAME=admin"
-#- lineinfile: dest=~/.bashrc regexp="export OS_PASSWORD=" line="export OS_PASSWORD={{ admin_password }}"
-#- lineinfile: dest=~/.bashrc regexp="export OS_TENANT_NAME=" line="export OS_TENANT_NAME=admin"
-#- lineinfile: dest=~/.bashrc regexp="export OS_AUTH_URL=" line="export OS_AUTH_URL={{ keystone_auth_url }}/v3 }}"
+- lineinfile: dest=~/.bashrc regexp="export OS_PROJECT_DOMAIN_ID=" line="export OS_PROJECT_DOMAIN_ID=default"
+- lineinfile: dest=~/.bashrc regexp="export OS_PROJECT_NAME=" line="export OS_PROJECT_NAME=admin"
+- lineinfile: dest=~/.bashrc regexp="export OS_USER_DOMAIN_ID=" line="export OS_USER_DOMAIN_ID=default"
+- lineinfile: dest=~/.bashrc regexp="export OS_TENANT_NAME=" line="export OS_TENANT_NAME=admin"
+- lineinfile: dest=~/.bashrc regexp="export OS_USERNAME=" line="export OS_USERNAME=admin"
+- lineinfile: dest=~/.bashrc regexp="export OS_PASSWORD=" line="export OS_PASSWORD={{ admin_password }}"
+- lineinfile: dest=~/.bashrc regexp="export OS_AUTH_URL=" line="export OS_AUTH_URL={{ keystone_auth_url }}/v3"
 
 
 
 
-
+#TODO: volatile
 - include: command.yml
   vars:
     get_command: openstack service show identity
     create_command: openstack service create --name keystone --description "OpenStack Identity" identity
-
+#TODO: volatile
 - include: command.yml
   vars:
     get_command: openstack endpoint show identity

@@ -19,3 +19,10 @@
 
   vars_files:
     - vars/openstack.yml
+
+- name: Pip install packages
+  hosts: all
+  tasks:
+    - shell: pip install {{ item }}
+      with_items:
+        - tox
