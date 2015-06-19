@@ -17,7 +17,7 @@
 #
 #- shell: pip install {{ item }} --no-allow-insecure
 #  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/keystone
-
+#
 #- shell: pip install -e {{ deploy_dir }}/keystone --no-allow-insecure
 
 - file: path={{ item }} state=directory owner={{ user_name }} group={{ group_name }}
@@ -82,7 +82,7 @@
 #- lineinfile: dest=~/.bashrc regexp="export OS_USERNAME=" line="export OS_USERNAME=admin"
 #- lineinfile: dest=~/.bashrc regexp="export OS_PASSWORD=" line="export OS_PASSWORD={{ admin_password }}"
 #- lineinfile: dest=~/.bashrc regexp="export OS_TENANT_NAME=" line="export OS_TENANT_NAME=admin"
-#- lineinfile: dest=~/.bashrc regexp="export OS_AUTH_URL=" line="export OS_AUTH_URL={{ keystone_admin_url }}"
+#- lineinfile: dest=~/.bashrc regexp="export OS_AUTH_URL=" line="export OS_AUTH_URL={{ keystone_auth_url }}/v3 }}"
 
 
 
