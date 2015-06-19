@@ -2,5 +2,5 @@
 
 glance_service_port: 9292
 
-glance_admin_url: http://controller:{{ glance_service_port }}/v2.0
-glance_service_url: http://controller:{{ glance_service_port }}/v2.0
+glance_admin_url: http://controller:{{ glance_service_port }}
+glance_service_url: http://controller:{{ glance_service_port }}
