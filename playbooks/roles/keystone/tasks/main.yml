@@ -18,7 +18,7 @@
 #- shell: pip install {{ item }} --no-allow-insecure
 #  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/keystone
 
-- shell: pip install -e {{ deploy_dir }}/keystone --no-allow-insecure
+#- shell: pip install -e {{ deploy_dir }}/keystone --no-allow-insecure
 
 - file: path={{ item }} state=directory owner={{ user_name }} group={{ group_name }}
   with_items:
