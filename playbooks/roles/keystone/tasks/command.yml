@@ -4,4 +4,4 @@
   register: result
   ignore_errors: True
 - shell: "{{ create_command }}"
-  when: result|failed
+  when: result|failed or result.stdout.strip() == ''
