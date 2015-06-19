@@ -13,5 +13,5 @@ keystone_service_port: 5000
 keystone_auth_url: http://controller:{{ keystone_admin_port }}
 keystone_auth_uri: http://controller:{{ keystone_service_port }}
 
-keystone_admin_url: keystone_auth_url/v2.0
-keystone_service_url: keystone_auth_uri/v2.0
+keystone_admin_url: "{{ keystone_auth_url }}/v2.0"
+keystone_service_url: "{{ keystone_auth_uri }}/v2.0"
