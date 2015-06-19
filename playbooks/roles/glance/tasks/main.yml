@@ -44,17 +44,34 @@
             section={{item.section}} option={{item.option}} value={{item.value}}
   with_items:
     - {section: 'database', option: 'connection', value: 'mysql://glance:{{ glance_dbpass }}@{{ ansible_hostname }}/glance'}
-    - {section: 'keystone_authtoken', option: 'auth_uri', value: 'keystone_auth_uri'}
-    - {section: 'keystone_authtoken', option: 'auth_url', value: 'keystone_auth_url'}
+    - {section: 'keystone_authtoken', option: 'auth_uri', value: '{{ keystone_auth_uri }}'}
+    - {section: 'keystone_authtoken', option: 'auth_url', value: '{{ keystone_auth_url }}'}
     - {section: 'keystone_authtoken', option: 'auth_plugin', value: 'password'}
     - {section: 'keystone_authtoken', option: 'project_domain_id', value: 'default'}
     - {section: 'keystone_authtoken', option: 'user_domain_id', value: 'default'}
     - {section: 'keystone_authtoken', option: 'project_name', value: 'service'}
     - {section: 'keystone_authtoken', option: 'username', value: 'glance'}
-    - {section: 'keystone_authtoken', option: 'password', value: '{{ glance_password}}'}
+    - {section: 'keystone_authtoken', option: 'password', value: '{{ glance_password }}'}
     - {section: 'paste_deploy', option: 'flavor', value: 'keystone'}
     - {section: 'glance_store', option: 'default_store', value: 'file'}
     - {section: 'glance_store', option: 'filesystem_store_datadir', value: '/var/lib/glance/images/'}
+    - {section: 'DEFAULT', option: 'notification', value: 'noop'}
+    - {section: 'DEFAULT', option: 'verbose', value: 'True'}
+
+- ini_file: dest=/etc/glance/glance-registry.conf
+            section={{item.section}} option={{item.option}} value={{item.value}}
+  with_items:
+    - {section: 'database', option: 'connection', value: 'mysql://glance:{{ glance_dbpass }}@{{ ansible_hostname }}/glance'}
+    - {section: 'DEFAULT', option: 'verbose', value: 'True'}
+    - {section: 'keystone_authtoken', option: 'auth_uri', value: '{{ keystone_auth_uri }}'}
+    - {section: 'keystone_authtoken', option: 'auth_url', value: '{{ keystone_auth_url }}'}
+    - {section: 'keystone_authtoken', option: 'auth_plugin', value: 'password'}
+    - {section: 'keystone_authtoken', option: 'project_domain_id', value: 'default'}
+    - {section: 'keystone_authtoken', option: 'user_domain_id', value: 'default'}
+    - {section: 'keystone_authtoken', option: 'project_name', value: 'service'}
+    - {section: 'keystone_authtoken', option: 'username', value: 'glance'}
+    - {section: 'keystone_authtoken', option: 'password', value: '{{ glance_password }}'}
+    - {section: 'paste_deploy', option: 'flavor', value: 'keystone'}
     - {section: 'DEFAULT', option: 'notification', value: 'noop'}
     - {section: 'DEFAULT', option: 'verbose', value: 'True'}
 
@@ -85,3 +102,6 @@
     create_command: openstack endpoint create --publicurl "{{ glance_service_url }}" --adminurl "{{ glance_admin_url }}" --internalurl "{{ glance_service_url }}" --region RegionOne image
 
 
+
+- shell: glance-api &
+- shell: glance-registry &
