@@ -21,3 +21,8 @@
          -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '{{ nova_dbpass }}';"
   when: "'nova' not in databases.stdout"
 
+- shell: mysql -srN -p{{ db_password }} -e "CREATE DATABASE neutron;"
+         -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY '{{ neutron_dbpass }}';"
+         -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY '{{ neutron_dbpass }}';"
+  when: "'neutron' not in databases.stdout"
+

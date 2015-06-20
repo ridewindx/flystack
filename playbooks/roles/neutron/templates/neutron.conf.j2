@@ -1,0 +1,43 @@
+[DEFAULT]
+rpc_backend = rabbit
+
+auth_strategy = keystone
+
+core_plugin = ml2
+service_plugins = router
+allow_overlapping_ips = True
+
+notify_nova_on_port_status_changes = True
+notify_nova_on_port_data_changes = True
+nova_url = http://controller:8774/v2
+
+verbose = True
+log_dir = /var/log/nova
+
+[database]
+connection = mysql://neutron:{{ neutron_dbpass }}@controller/neutron
+
+[oslo_messaging_rabbit]
+rabbit_host = controller
+rabbit_userid = {{ rabbitmq_user }}
+rabbit_password = {{ rabbitmq_password }}
+
+[keystone_authtoken]
+auth_uri = {{ keystone_auth_uri }}
+auth_url = {{ keystone_auth_url }}
+auth_plugin = password
+project_domain_id = default
+user_domain_id = default
+project_name = service
+username = neutron
+password = {{ neutron_password }}
+
+[nova]
+auth_url = http://controller:35357
+auth_plugin = password
+project_domain_id = default
+user_domain_id = default
+region_name = RegionOne
+project_name = service
+username = nova
+password = {{ nova_password }}

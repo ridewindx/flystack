@@ -2,5 +2,5 @@
 
 nova_service_port: 8774
 
-nova_admin_url: http://controller:{{ nova_service_port }}/v2/%\(tenant_id\)s
-nova_service_url: http://controller:{{ nova_service_port }}/v2/%\(tenant_id\)s
+nova_admin_url: http://controller:{{ nova_service_port }}/v2/%(tenant_id)s
+nova_service_url: http://controller:{{ nova_service_port }}/v2/%(tenant_id)s

@@ -1,0 +1,76 @@
+---
+
+- file: path={{ deploy_dir }} state=directory
+
+- synchronize: src={{ source_dir }}/neutron dest={{ deploy_dir }}
+  delegate_to: localhost
+
+- shell: pip install {{ item }} --no-allow-insecure
+  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/neutron
+
+- shell: pip install -e {{ deploy_dir }}/neutron --no-allow-insecure
+
+- file: path={{ item }} state=directory owner={{ user_name }} group={{ group_name }}
+  with_items:
+    - /etc/neutron
+    - /var/log/neutron
+
+- copy: src={{ deploy_dir }}/neutron/etc/{{ item }} dest=/etc/neutron/
+  with_items:
+    - neutron.conf
+    - api-paste.ini
+    - dhcp_agent.ini
+    - l3_agent.ini
+    - metadata_agent.ini
+    - metering_agent.ini
+    - policy.json
+    - rootwrap.conf
+
+- copy: src={{ deploy_dir }}/neutron/etc/neutron/{{ item }} dest=/etc/neutron/
+  with_items:
+    - plugins
+    - rootwrap.d
+
+- template: src=neutron.conf.j2 dest=/etc/neutron/neutron.conf owner={{ user_name }} group={{ group_name}}
+
+- template: src=ml2_conf.ini.j2 dest=/etc/neutron/plugins/ml2/ml2_conf.ini owner={{ user_name }} group={{ group_name}}
+
+- command: ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
+
+
+- command: neutron-manage upgrade head
+
+
+
+
+
+- include: command.yml
+  vars:
+    get_command: openstack user show neutron
+    create_command: openstack user create --password {{ nova_password }} neutron
+
+- include: command.yml
+  vars:
+    get_command: openstack user role list --project service neutron
+    create_command: openstack role add --project service --user neutron admin
+
+- include: command.yml
+  vars:
+    get_command: openstack service show neutron
+    create_command: openstack service create --name neutron --description "OpenStack Networking" network
+
+- include: command.yml
+  vars:
+    get_command: openstack endpoint show network
+    create_command: openstack endpoint create --publicurl "{{ neutron_service_url }}" --adminurl "{{ neutron_admin_url }}" --internalurl "{{ neutron_service_url }}" --region RegionOne network
+
+
+
+
+
+- shell: nova-api &
+- shell: nova-cert &
+- shell: nova-consoleauth &
+- shell: nova-scheduler &
+- shell: nova-conductor &
+- shell: nova-novncproxy &

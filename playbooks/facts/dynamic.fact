@@ -21,8 +21,13 @@ def gather_facts():
     hostip, hostname = trycmd(cmd).split()
     cmd = r"ip -o addr | grep %s | awk '{print $2}'" % hostip
     hostif = trycmd(cmd).strip()
+
+    cmd = r"egrep -c '(vmx|svm)' /proc/cpuinfo"
+    hypervisor = 'kvm' if trycmd(cmd).strip() else 'qemu'
+
     facts = {
-        'host': {'name': hostname, 'address': hostip, 'interface': hostif}
+        'host': {'name': hostname, 'address': hostip, 'interface': hostif},
+        'hypervisor': hypervisor
     }
 
     return json.dumps(facts)

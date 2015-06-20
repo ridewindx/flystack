@@ -1,0 +1,18 @@
+---
+
+- name: Setup neutron
+  hosts: network
+
+  pre_tasks:
+    - include: setup-users.yml
+
+  roles:
+    - neutron
+
+  vars_files:
+    - vars/openstack.yml
+    - vars/secrets.yml
+
+  vars:
+    user_name: neutron
+    group_name: neutron

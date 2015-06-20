@@ -2,26 +2,34 @@
 
 - file: path={{ deploy_dir }} state=directory
 
-- synchronize: src={{ source_dir }}/nova dest={{ deploy_dir }}
-  delegate_to: localhost
-
-- shell: pip install {{ item }} --no-allow-insecure
-  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/nova
-
-- shell: pip install -e {{ deploy_dir }}/nova --no-allow-insecure
+#- synchronize: src={{ source_dir }}/nova dest={{ deploy_dir }}
+#  delegate_to: localhost
+#
+#- shell: pip install {{ item }} --no-allow-insecure
+#  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/nova
+#
+#- shell: pip install -e {{ deploy_dir }}/nova --no-allow-insecure
 
 - file: path={{ item }} state=directory owner={{ user_name }} group={{ group_name }}
   with_items:
     - /etc/nova
     - /var/log/nova
+    - /var/lock/nova
+    - /usr/share/novnc
 
-- copy: src={{ deploy_dir }}/glance/etc/{{ item }} dest=/etc/glance/{{ item.replace('.sample', '').replace('_sample', '') }}
+- copy: src={{ deploy_dir }}/nova/etc/nova/{{ item }} dest=/etc/nova/{{ item.replace('.sample', '').replace('_sample', '') }}
   with_items:
-    - glance-api.conf
+    - api-paste.ini
+    - cells.json
+    - logging_sample.conf
+    - policy.json
+    - rootwrap.conf
 
+- copy: src={{ deploy_dir }}/nova/etc/nova/rootwrap.d dest=/etc/nova/
 
+- template: src=nova.conf.j2 dest=/etc/nova/nova.conf owner={{ user_name }} group={{ group_name}}
 
-
+- command: nova-manage db sync
 
 
 
@@ -46,3 +54,14 @@
   vars:
     get_command: openstack endpoint show compute
     create_command: openstack endpoint create --publicurl "{{ nova_service_url }}" --adminurl "{{ nova_admin_url }}" --internalurl "{{ nova_service_url }}" --region RegionOne compute
+
+
+
+
+
+- shell: nova-api &
+- shell: nova-cert &
+- shell: nova-consoleauth &
+- shell: nova-scheduler &
+- shell: nova-conductor &
+- shell: nova-novncproxy &
