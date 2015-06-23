@@ -50,7 +50,7 @@
 - command: keystone-manage db_sync
 
 
-- shell: keystone-all &
+#- shell: keystone-all &
 
 #TODO: wait until kestone ready
 
