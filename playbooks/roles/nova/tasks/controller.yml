@@ -1,0 +1,24 @@
+---
+
+- command: nova-manage db sync
+
+
+- include: command.yml
+  vars:
+    get_command: openstack user show nova
+    create_command: openstack user create --password {{ nova_password }} nova
+
+- include: command.yml
+  vars:
+    get_command: openstack user role list --project service nova
+    create_command: openstack role add --project service --user nova admin
+
+- include: command.yml
+  vars:
+    get_command: openstack service show nova
+    create_command: openstack service create --name nova --description "OpenStack Compute" compute
+
+- include: command.yml
+  vars:
+    get_command: openstack endpoint show compute
+    create_command: openstack endpoint create --publicurl "{{ nova_service_url }}" --adminurl "{{ nova_admin_url }}" --internalurl "{{ nova_service_url }}" --region RegionOne compute
