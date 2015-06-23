@@ -8,8 +8,15 @@
 
   roles:
     - keystone
-    - { role: supervisor, name: keystone, programs: [
-      {name: keystone-all, cmdline: "{{ virtualenv_dir }}/bin/keystone-all"}]}
+
+    - { role: supervisor, name: keystone,
+        programs: [
+          {name: keystone-all, cmdline: "{{ virtualenv_dir }}/bin/keystone-all"}
+        ]
+      }
+
+  post_tasks:
+    - include: roles/keystone/tasks/identity.yml
 
   vars_files:
     - vars/openstack.yml

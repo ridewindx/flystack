@@ -1,0 +1,24 @@
+---
+
+- command: neutron-db-manage upgrade head
+
+
+- include: command.yml
+  vars:
+    get_command: openstack user show neutron
+    create_command: openstack user create --password {{ nova_password }} neutron
+
+- include: command.yml
+  vars:
+    get_command: openstack user role list --project service neutron
+    create_command: openstack role add --project service --user neutron admin
+
+- include: command.yml
+  vars:
+    get_command: openstack service show neutron
+    create_command: openstack service create --name neutron --description "OpenStack Networking" network
+
+- include: command.yml
+  vars:
+    get_command: openstack endpoint show network
+    create_command: openstack endpoint create --publicurl "{{ neutron_service_url }}" --adminurl "{{ neutron_admin_url }}" --internalurl "{{ neutron_service_url }}" --region RegionOne network

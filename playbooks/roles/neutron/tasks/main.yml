@@ -2,8 +2,7 @@
 
 - file: path={{ deploy_dir }} state=directory
 
-- synchronize: src={{ source_dir }}/neutron dest={{ deploy_dir }}
-  delegate_to: localhost
+- synchronize: src={{ source_dir }}/neutron dest={{ deploy_dir }} mode=push
 
 - shell: pip install {{ item }} --no-allow-insecure
   with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/neutron
@@ -36,41 +35,13 @@
 - template: src=ml2_conf.ini.j2 dest=/etc/neutron/plugins/ml2/ml2_conf.ini owner={{ user_name }} group={{ group_name}}
 
 - command: ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
+  ignore_errors: True
 
 
-- command: neutron-manage upgrade head
+- include: controller.yml
+  when: >
+    inventory_hostname in groups['controllers']
 
-
-
-
-
-- include: command.yml
-  vars:
-    get_command: openstack user show neutron
-    create_command: openstack user create --password {{ nova_password }} neutron
-
-- include: command.yml
-  vars:
-    get_command: openstack user role list --project service neutron
-    create_command: openstack role add --project service --user neutron admin
-
-- include: command.yml
-  vars:
-    get_command: openstack service show neutron
-    create_command: openstack service create --name neutron --description "OpenStack Networking" network
-
-- include: command.yml
-  vars:
-    get_command: openstack endpoint show network
-    create_command: openstack endpoint create --publicurl "{{ neutron_service_url }}" --adminurl "{{ neutron_admin_url }}" --internalurl "{{ neutron_service_url }}" --region RegionOne network
-
-
-
-
-
-- shell: nova-api &
-- shell: nova-cert &
-- shell: nova-consoleauth &
-- shell: nova-scheduler &
-- shell: nova-conductor &
-- shell: nova-novncproxy &
+- include: network.yml
+  when: >
+    inventory_hostname in groups['networks']

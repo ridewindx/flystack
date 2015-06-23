@@ -18,16 +18,20 @@
 
   vars:
     install_packages:
+      - gcc
       - rsync
       - git
       - epel-release
+      - libffi-devel  # depended by python cffi, python cryptography
+      - openssl-devel  # depended by python cryptography
+      - libxslt-devel  # depended by lxml
       - supervisor
 
     autostart_services:
       - supervisord
 
 
-- hosts: controller
+- hosts: controllers
   tasks:
     - yum: name={{ item }} state=present
       with_items: install_packages
@@ -41,15 +45,31 @@
       - mod_wsgi
       - memcached
       - python-memcached
-      - libffi-devel  # depended by python cffi, python cryptography
-      - openssl-devel  # depended by python cryptography
-      - libxslt-devel  # depended by lxml
 
     autostart_services:
       - memcached
 
+- hosts: networks
+  tasks:
+    - yum: name=http://rdo.fedorapeople.org/openstack-kilo/rdo-release-kilo.rpm state=present
+
+    - yum: name={{ item }} state=present
+      with_items: install_packages
+
+    - service: name={{ item }} enabled=yes state=started
+      with_items: autostart_services
+
+  vars:
+    install_packages:
+      - openvswitch
+
+    autostart_services:
+      - openvswitch
+
 - hosts: computes
   tasks:
+    - yum: name=http://rdo.fedorapeople.org/openstack-kilo/rdo-release-kilo.rpm state=present
+
     - yum: name={{ item }} state=present
       with_items: install_packages
 
@@ -59,6 +79,9 @@
   vars:
     install_packages:
       - libvirt
+      - libvirt-python
+      - openvswitch
 
     autostart_services:
       - libvirtd
+      - openvswitch

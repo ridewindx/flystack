@@ -2,11 +2,13 @@
 
 - file: path={{ deploy_dir }} state=directory
 
-- synchronize: src={{ source_dir }}/nova dest={{ deploy_dir }}
-  delegate_to: localhost
+- synchronize: src={{ source_dir }}/nova dest={{ deploy_dir }} mode=push
 
 - shell: pip install {{ item }} --no-allow-insecure
   with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/nova
+
+# bugfix: jsonschema depends on functools32
+- shell: pip install functools32 --no-allow-insecure
 
 - shell: pip install -e {{ deploy_dir }}/nova --no-allow-insecure
 

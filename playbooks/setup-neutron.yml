@@ -1,13 +1,34 @@
 ---
 
 - name: Setup neutron
-  hosts: network
+  hosts: networks:controllers:computes
 
   pre_tasks:
     - include: setup-users.yml
 
   roles:
     - neutron
+
+    - { role: supervisor, name: neutron,
+        programs: [
+          {name: neutron-server, cmdline: "{{ virtualenv_dir }}/bin/neutron-server"}
+        ],
+        when: "inventory_hostname in groups['controllers']"
+      }
+
+    - { role: supervisor, name: neutron,
+        programs: [
+          {name: neutron-server, cmdline: "{{ virtualenv_dir }}/bin/neutron-server"}
+        ],
+        when: "inventory_hostname in groups['networks']"
+      }
+
+    - { role: supervisor, name: neutron,
+        programs: [
+          {name: neutron-server, cmdline: "{{ virtualenv_dir }}/bin/neutron-server"}
+        ],
+        when: "inventory_hostname in groups['computes']"
+      }
 
   vars_files:
     - vars/openstack.yml

@@ -8,6 +8,7 @@
 
   roles:
     - glance
+
     - { role: supervisor, name: glance, programs: [
       {name: glance-api, cmdline: "{{ virtualenv_dir }}/bin/glance-api"},
       {name: glance-registry, cmdline: "{{ virtualenv_dir }}/bin/glance-registry"}]}
