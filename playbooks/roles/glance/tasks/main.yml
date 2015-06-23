@@ -103,5 +103,5 @@
 
 
 
-- shell: glance-api &
-- shell: glance-registry &
+#- shell: glance-api &
+#- shell: glance-registry &
