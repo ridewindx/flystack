@@ -8,6 +8,8 @@
 
   roles:
     - keystone
+    - { role: supervisor, name: keystone, programs: [
+      {name: keystone-all, cmdline: "{{ virtualenv_dir }}/bin/keystone-all"}]}
 
   vars_files:
     - vars/openstack.yml
