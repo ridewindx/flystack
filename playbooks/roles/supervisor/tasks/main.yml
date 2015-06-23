@@ -1,0 +1,5 @@
+---
+
+- template: src=supervisor.ini.j2 dest=/etc/supervisord.d/{{ name }}.ini
+
+- service: name=supervisord state=restarted
