@@ -2,31 +2,38 @@
 
 - name: Upgrade packages
   hosts: all
-
   tasks:
     - name: Upgrade packages
       yum: name=* state=latest
       when: upgrade is defined
 
-    - name: Install packages
-      yum: name={{ item }} state=present
+
+- hosts: all
+  tasks:
+    - yum: name={{ item }} state=present
       with_items: install_packages
+
+    - service: name={{ item }} enabled=yes state=started
+      with_items: autostart_services
 
   vars:
     install_packages:
       - rsync
       - git
       - epel-release
+      - supervisor
 
-- name: Install and enable services on controller
-  hosts: controller
+    autostart_services:
+      - supervisord
 
+
+- hosts: controller
   tasks:
-    - name: Install packages
-      yum: name={{ item }} state=present
+    - yum: name={{ item }} state=present
       with_items: install_packages
 
-    - service: name=memcached enabled=yes state=started
+    - service: name={{ item }} enabled=yes state=started
+      with_items: autostart_services
 
   vars:
     install_packages:
@@ -34,7 +41,24 @@
       - mod_wsgi
       - memcached
       - python-memcached
-#      - python-cffi  # pip install cffi failed
       - libffi-devel  # depended by python cffi, python cryptography
       - openssl-devel  # depended by python cryptography
       - libxslt-devel  # depended by lxml
+
+    autostart_services:
+      - memcached
+
+- hosts: computes
+  tasks:
+    - yum: name={{ item }} state=present
+      with_items: install_packages
+
+    - service: name={{ item }} enabled=yes state=started
+      with_items: autostart_services
+
+  vars:
+    install_packages:
+      - libvirt
+
+    autostart_services:
+      - libvirtd
