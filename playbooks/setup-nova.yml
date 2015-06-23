@@ -1,13 +1,33 @@
 ---
 
 - name: Setup nova
-  hosts: controller
+  hosts: controllers:computes
 
   pre_tasks:
     - include: setup-users.yml
 
   roles:
     - nova
+
+    - { role: supervisor, name: nova,
+        programs: [
+          {name: nova-api, cmdline: "{{ virtualenv_dir }}/bin/nova-api"},
+          {name: nova-cert, cmdline: "{{ virtualenv_dir }}/bin/nova-cert"},
+          {name: nova-consoleauth, cmdline: "{{ virtualenv_dir }}/bin/nova-consoleauth"},
+          {name: nova-scheduler, cmdline: "{{ virtualenv_dir }}/bin/nova-scheduler"},
+          {name: nova-conductor, cmdline: "{{ virtualenv_dir }}/bin/nova-conductor"},
+          {name: nova-novncproxy, cmdline: "{{ virtualenv_dir }}/bin/nova-novncproxy"}
+        ],
+        when: "inventory_hostname in groups['controllers']"
+      }
+
+    - { role: supervisor, name: nova,
+        programs: [
+          {name: nova-compute, cmdline: "{{ virtualenv_dir }}/bin/nova-compute"}
+        ],
+        when: "inventory_hostname in groups['computes']"
+      }
+
 
   vars_files:
     - vars/openstack.yml
