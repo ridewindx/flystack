@@ -2,13 +2,13 @@
 
 - file: path={{ deploy_dir }} state=directory
 
-#- synchronize: src={{ source_dir }}/nova dest={{ deploy_dir }}
-#  delegate_to: localhost
-#
-#- shell: pip install {{ item }} --no-allow-insecure
-#  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/nova
-#
-#- shell: pip install -e {{ deploy_dir }}/nova --no-allow-insecure
+- synchronize: src={{ source_dir }}/nova dest={{ deploy_dir }}
+  delegate_to: localhost
+
+- shell: pip install {{ item }} --no-allow-insecure
+  with_lines: python /etc/ansible/facts.d/get-requirements.py {{ deploy_dir }}/nova
+
+- shell: pip install -e {{ deploy_dir }}/nova --no-allow-insecure
 
 - file: path={{ item }} state=directory owner={{ user_name }} group={{ group_name }}
   with_items:
@@ -29,39 +29,11 @@
 
 - template: src=nova.conf.j2 dest=/etc/nova/nova.conf owner={{ user_name }} group={{ group_name}}
 
-- command: nova-manage db sync
 
+- include: controller.yml
+  when: >
+    inventory_hostname in groups['controllers']
 
-
-
-
-- include: command.yml
-  vars:
-    get_command: openstack user show nova
-    create_command: openstack user create --password {{ nova_password }} nova
-
-- include: command.yml
-  vars:
-    get_command: openstack user role list --project service nova
-    create_command: openstack role add --project service --user nova admin
-
-- include: command.yml
-  vars:
-    get_command: openstack service show nova
-    create_command: openstack service create --name nova --description "OpenStack Compute" compute
-
-- include: command.yml
-  vars:
-    get_command: openstack endpoint show compute
-    create_command: openstack endpoint create --publicurl "{{ nova_service_url }}" --adminurl "{{ nova_admin_url }}" --internalurl "{{ nova_service_url }}" --region RegionOne compute
-
-
-
-
-
-- shell: nova-api &
-- shell: nova-cert &
-- shell: nova-consoleauth &
-- shell: nova-scheduler &
-- shell: nova-conductor &
-- shell: nova-novncproxy &
+- include: compute.yml
+  when: >
+    inventory_hostname in groups['computes']
