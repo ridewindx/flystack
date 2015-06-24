@@ -15,3 +15,17 @@ keystone_auth_uri: http://controller:{{ keystone_service_port }}
 
 keystone_admin_url: "{{ keystone_auth_url }}/v2.0"
 keystone_service_url: "{{ keystone_auth_uri }}/v2.0"
+
+
+ext_net_name: "ext-net"
+ext_net_subnet_name: "ext-subnet"
+ext_net_cidr: "203.0.113.0/24"
+ext_net_floating_ip_pool: "203.0.113.101~203.0.113.200"
+ext_net_gateway: "203.0.113.1"
+
+tenant_net_name: "demo-net"
+tenant_net_subnet_name: "demo-subnet"
+tenant_net_cidr: "192.168.244.0/24"
+tenant_net_gateway: "192.168.244.1"
+
+router_name: "demo-router"

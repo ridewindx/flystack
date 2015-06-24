@@ -16,3 +16,9 @@ tunnel_id_ranges = 1:1000
 enable_security_group = True
 enable_ipset = True
 firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+
+[ovs]
+local_ip = {{ ansible_local.dynamic.interfaces[1].address }}
+
+[agent]
+tunnel_types = gre

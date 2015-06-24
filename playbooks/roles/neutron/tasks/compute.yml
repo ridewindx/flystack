@@ -1,6 +1,5 @@
 ---
 
-- lineinfile: dest=/etc/sysctl.conf regexp="net.ipv4.ip_forward" line="net.ipv4.ip_forward=1"
 - lineinfile: dest=/etc/sysctl.conf regexp="net.ipv4.conf.all.rp_filter" line="net.ipv4.conf.all.rp_filter=0"
 - lineinfile: dest=/etc/sysctl.conf regexp="net.ipv4.conf.default.rp_filter" line="net.ipv4.conf.default.rp_filter=0"
 
@@ -14,6 +13,3 @@
 - template: src=dnsmasq-neutron.conf.j2 dest=/etc/neutron/dnsmasq-neutron.conf owner={{ user_name }} group={{ group_name}}
 
 - template: src=metadata_agent.ini.j2 dest=/etc/neutron/metadata_agent.ini owner={{ user_name }} group={{ group_name}}
-
-- shell: ovs-vsctl --may-exist add-br br-ex
-- shell: ovs-vsctl --may-exist add-port br-ex {{ ansible_local.dynamic.interfaces[2].name }}

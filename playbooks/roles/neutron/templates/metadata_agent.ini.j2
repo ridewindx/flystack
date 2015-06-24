@@ -10,6 +10,7 @@ username = neutron
 password = {{ neutron_password }}
 
 nova_metadata_ip = controller
-metadata_proxy_shared_secret = METADATA_SECRET
+metadata_proxy_shared_secret = {{ neutron_password }}
 
 verbose = True
+log_dir = /var/log/neutron

@@ -12,7 +12,7 @@ notify_nova_on_port_data_changes = True
 nova_url = http://controller:8774/v2
 
 verbose = True
-log_dir = /var/log/nova
+log_dir = /var/log/neutron
 
 [database]
 connection = mysql://neutron:{{ neutron_dbpass }}@controller/neutron
@@ -33,7 +33,7 @@ username = neutron
 password = {{ neutron_password }}
 
 [nova]
-auth_url = http://controller:35357
+auth_url = {{ keystone_auth_url }}
 auth_plugin = password
 project_domain_id = default
 user_domain_id = default

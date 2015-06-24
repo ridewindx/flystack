@@ -18,17 +18,24 @@
 
     - { role: supervisor, name: neutron,
         programs: [
-          {name: neutron-server, cmdline: "{{ virtualenv_dir }}/bin/neutron-server"}
+          {name: neutron-openvswitch-agent, cmdline: "{{ virtualenv_dir }}/bin/neutron-openvswitch-agent"},
+          {name: neutron-l3-agent, cmdline: "{{ virtualenv_dir }}/bin/neutron-l3-agent --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/l3_agent.ini"},
+          {name: neutron-dhcp-agent, cmdline: "{{ virtualenv_dir }}/bin/neutron-dhcp-agent --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/dhcp_agent.ini"},
+          {name: neutron-metadata-agent, cmdline: "{{ virtualenv_dir }}/bin/neutron-metadata-agent --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/metadata_agent.ini"}
         ],
         when: "inventory_hostname in groups['networks']"
       }
 
     - { role: supervisor, name: neutron,
         programs: [
-          {name: neutron-server, cmdline: "{{ virtualenv_dir }}/bin/neutron-server"}
+          {name: neutron-openvswitch-agent, cmdline: "{{ virtualenv_dir }}/bin/neutron-openvswitch-agent"}
         ],
         when: "inventory_hostname in groups['computes']"
       }
+
+  post_tasks:
+    - include: roles/neutron/tasks/initial-nets.yml
+      when: "inventory_hostname in groups['controllers']"
 
   vars_files:
     - vars/openstack.yml

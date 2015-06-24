@@ -22,11 +22,20 @@ def gather_facts():
     cmd = r"ip -o addr | grep %s | awk '{print $2}'" % hostip
     hostif = trycmd(cmd).strip()
 
+    interfaces = []
+    cmd = r"ip -o link | grep ether | awk '{print $2}'"
+    for i in trycmd(cmd).splitlines():
+        ifname = i.rstrip()
+        cmd = r"ip -o addr show dev %s | grep -v inet6 | awk '{print $4}' | awk -F'/' '{print $1}'" % ifname
+        ifaddr = trycmd(cmd).strip()
+        interfaces.append({'name': ifname, 'address': ifaddr})
+
     cmd = r"egrep -c '(vmx|svm)' /proc/cpuinfo"
     hypervisor = 'kvm' if trycmd(cmd).strip() else 'qemu'
 
     facts = {
         'host': {'name': hostname, 'address': hostip, 'interface': hostif},
+        'interfaces': interfaces,
         'hypervisor': hypervisor
     }
 

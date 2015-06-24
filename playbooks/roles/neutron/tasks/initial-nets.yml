@@ -1,0 +1,41 @@
+---
+
+- include: command.yml
+  vars:
+    get_command: neutron ext-list
+    create_command: /bin/false  # error occurred
+
+- include: command.yml
+  vars:
+    get_command: neutron net-show {{ ext_net_name }}
+    create_command: >
+                   neutron net-create {{ ext_net_name }} --router:external
+                   --provider:physical_network external --provider:network_type flat
+
+- include: command.yml
+  vars:
+    get_command: neutron subnet-show {{ ext_net_subnet_name }}
+    create_command: >
+                    neutron subnet-create {{ ext_net_name }} {{ ext_net_cidr }} --name {{ ext_net_subnet_name }}
+                    --allocation-pool start={{ ext_net_floating_ip_pool.split('~')[0] }},end={{ ext_net_floating_ip_pool.split('~')[1] }}
+                    --disable-dhcp --gateway {{ ext_net_gateway }}
+
+- include: command.yml
+  vars:
+    get_command: neutron net-show {{ tenant_net_name }}
+    create_command: neutron net-create {{ tenant_net_name }}
+
+- include: command.yml
+  vars:
+    get_command: neutron subnet-show {{ tenant_net_subnet_name }}
+    create_command: >
+                    neutron subnet-create {{ tenant_net_name }} {{ tenant_net_cidr }}
+                    --name {{ tenant_net_subnet_name }} --gateway {{ tenant_net_gateway }}
+
+- include: command.yml
+  vars:
+    get_command: neutron router-show {{ router_name }}
+    create_command: >
+                    neutron router-create {{ router_name }} &&
+                    neutron router-interface-add {{ router_name }} {{ tenant_net_subnet_name }} &&
+                    neutron router-gateway-set {{ router_name }} {{ ext_net_name }}

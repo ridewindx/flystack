@@ -2,5 +2,5 @@
 
 neutron_service_port: 9696
 
-neutron_admin_url: http://controller:{{ neutron_service_port }}/v2
-neutron_service_url: http://controller:{{ neutron_service_port }}/v2
+neutron_admin_url: http://controller:{{ neutron_service_port }}
+neutron_service_url: http://controller:{{ neutron_service_port }}

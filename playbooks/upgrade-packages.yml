@@ -62,6 +62,7 @@
   vars:
     install_packages:
       - openvswitch
+      - dnsmasq
 
     autostart_services:
       - openvswitch

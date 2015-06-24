@@ -2,6 +2,10 @@
 
 - shell: "{{ get_command }}"
   register: result
+  until: "'Unable to establish connection to' not in result.stderr"
+  retries: 10
+  delay: 5
   ignore_errors: True
+
 - shell: "{{ create_command }}"
   when: result|failed or result.stdout.strip() == ''
