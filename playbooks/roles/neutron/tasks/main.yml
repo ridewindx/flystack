@@ -13,6 +13,7 @@
   with_items:
     - /etc/neutron
     - /var/log/neutron
+    - /var/lib/neutron
 
 - copy: src={{ deploy_dir }}/neutron/etc/{{ item }} dest=/etc/neutron/
   with_items:
@@ -35,8 +36,6 @@
 - template: src=ml2_conf.ini.j2 dest=/etc/neutron/plugins/ml2/ml2_conf.ini owner={{ user_name }} group={{ group_name}}
 
 - file: src=/etc/neutron/plugins/ml2/ml2_conf.ini dest=/etc/neutron/plugin.ini state=link
-#- command: ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
-#  ignore_errors: True
 
 
 - include: controller.yml
