@@ -25,7 +25,7 @@ def gather_facts():
     interfaces = []
     cmd = r"ip -o link | grep ether | awk '{print $2}'"
     for i in trycmd(cmd).splitlines():
-        ifname = i.rstrip()
+        ifname = i.rstrip(':')
         cmd = r"ip -o addr show dev %s | grep -v inet6 | awk '{print $4}' | awk -F'/' '{print $1}'" % ifname
         ifaddr = trycmd(cmd).strip()
         interfaces.append({'name': ifname, 'address': ifaddr})
