@@ -13,6 +13,9 @@
     - yum: name={{ item }} state=present
       with_items: install_packages
 
+    - lineinfile: dest=/etc/sudoers regexp='#?(Defaults.+requiretty)' line='#\1' backrefs=yes
+    - template: src=roles/supervisor/templates/supervisord.conf.j2 dest=/etc/supervisord.conf
+
     - service: name={{ item }} enabled=yes state=started
       with_items: autostart_services
 
