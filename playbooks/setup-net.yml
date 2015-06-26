@@ -18,7 +18,7 @@
       - lineinfile: dest={{ ifcfg_file }}{{ansible_local.dynamic.host.interface}} regexp=GATEWAY line={{ gateway.stdout }}
         when: ansible_hostname != 'controller'
 
-      - shell: ifdown eth0 && ifup eth0
+      - shell: ifdown {{ansible_local.dynamic.host.interface}} && ifup {{ansible_local.dynamic.host.interface}}
         when: ansible_hostname != 'controller'
 
   vars:
