@@ -17,6 +17,9 @@ log_dir = /var/log/neutron
 [database]
 connection = mysql://neutron:{{ neutron_dbpass }}@controller/neutron
 
+[oslo_concurrency]
+lock_path = $state_path/lock
+
 [oslo_messaging_rabbit]
 rabbit_host = controller
 rabbit_userid = {{ rabbitmq_user }}
